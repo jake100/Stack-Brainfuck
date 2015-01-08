@@ -13,16 +13,42 @@ public class VM {
     }
     private void evaluate(String code)
     {
+        ArrayList<String> functions = new ArrayList<String>();
+    	String rest = "";
+    	for(int i = 0; i < code.length(); i++) {
+    		String function = "";
+    		
+    		if(code.charAt(i) == '{')
+    		{
+    			for (i = i + 1; i < code.length(); i++) {
+					if(code.charAt(i) == '}')
+					{
+						break;
+					}
+					else
+					{
+						function += code.charAt(i);
+					}
+				}
+    			if(!function.equals(""))functions.add(function);
+    			function = "";
+    		}
+    		else if(code.charAt(i) != '}')
+    		{
+    			rest += code.charAt(i);
+    		}
+    	}
+    	code = rest;
     	 int l = 0;
          for(int i = 0; i < code.length(); i++) {
          	String num = "";
          	if((""+code.charAt(i)).matches("\\d")) {
-         		num += code.charAt(i);
+
                  for(i = 0; i < code.length(); i++) {
          			if((""+code.charAt(i)).matches("\\d"))num += code.charAt(i);
          		}
          		stack.push(Integer.parseInt(num));
-         		i--;
+         		i -= 2;
          		
          	} else if(code.charAt(i) == '>') {
                  dataPointer = (dataPointer == LENGTH-1) ? 0 : dataPointer + 1;
@@ -87,6 +113,8 @@ public class VM {
             	 mem[dataPointer] += stack.pop();
              } else if(code.charAt(i) == '\'') {
             	 mem[dataPointer] -= stack.pop();
+             } else if(code.charAt(i) == '$') {
+            	 evaluate(functions.get(stack.pop()));
              } else if(code.charAt(i) == '[') {
             	 
                  if(mem[dataPointer] == 0) {
@@ -111,7 +139,7 @@ public class VM {
          }
     }
     public static void main(String[] args) {
-        new VM().interpret("++^^^^^++.");
+        new VM().interpret("{+++.}0$");
         
     }
 }
