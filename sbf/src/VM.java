@@ -113,7 +113,10 @@ public class VM {
             	 mem[dataPointer] += stack.pop();
              } else if(code.charAt(i) == '\'') {
             	 mem[dataPointer] -= stack.pop();
-             } else if(code.charAt(i) == '$') {
+             } else if(code.charAt(i) == '%') {
+            	 if(mem[dataPointer] % 2 == 0)stack.push(1);
+            	 else stack.push(0);
+             }  else if(code.charAt(i) == '$') {
             	 evaluate(functions.get(stack.pop()));
              } else if(code.charAt(i) == '[') {
             	 
@@ -139,7 +142,7 @@ public class VM {
          }
     }
     public static void main(String[] args) {
-        new VM().interpret("{+++.}0$");
+        new VM().interpret("++%;.++%;.");
         
     }
 }
